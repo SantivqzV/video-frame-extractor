@@ -2,13 +2,13 @@ async function processVideo() {
   const fileInput = document.getElementById('videoFile');
   const file = fileInput.files[0];
   if (!file) {
-      alert('Please select a video file');
-      return;
+    alert('Please select a video file');
+    return;
   }
 
   const video = document.createElement('video');
   video.src = URL.createObjectURL(file);
-  await video.load();
+  await new Promise(resolve => video.onloadedmetadata = resolve);
 
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
@@ -18,17 +18,22 @@ async function processVideo() {
   const interval = 1; // Extract one frame every second
 
   for (let i = 0; i < video.duration; i += interval) {
-      video.currentTime = i;
-      await new Promise(resolve => video.oncanplay = resolve);
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      
-      const frameName = `frame_${String(Math.round(i * fps)).padStart(6, '0')}.jpg`;
-      const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg'));
-      zip.file(frameName, blob);
+    video.currentTime = i;
+    await new Promise(resolve => video.onseeked = resolve);
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const dataUrl = canvas.toDataURL('image/jpeg');
+    const base64Data = dataUrl.split(',')[1];
+    zip.file(`frame${i}.jpg`, base64Data, { base64: true });
   }
 
-  const content = await zip.generateAsync({type: 'blob'});
-  saveAs(content, 'video_frames.zip');
+  zip.generateAsync({ type: 'blob' }).then(content => {
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(content);
+    link.download = 'frames.zip';
+    link.click();
+  });
+
+  URL.revokeObjectURL(video.src);
 }
