@@ -14,6 +14,12 @@ async function processVideo() {
   const ctx = canvas.getContext('2d');
 
   const zip = new JSZip();
+
+  const gif = new GIF({
+    workers: 2,
+    quality: 10
+  });
+
   const fps = 30; // Assuming 30 fps, adjust as needed
   const interval = 1; // Extract one frame every second
 
@@ -34,6 +40,15 @@ async function processVideo() {
     link.download = 'frames.zip';
     link.click();
   });
+
+  gif.on('finished', function(blob) {
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'frames.gif';
+    link.click();
+  });
+
+  gif.render();
 
   URL.revokeObjectURL(video.src);
 }
