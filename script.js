@@ -26,6 +26,10 @@ async function processVideo() {
 
   const fps = 30; // Assuming 30 fps, adjust as needed
   const interval = 1; // Extract one frame every second
+  const totalFrames = Math.floor(video.duration / interval);
+
+  const frameProgress = document.getElementById('frameProgress');
+  const gifProgress = document.getElementById('gifProgress');
 
   for (let i = 0; i < video.duration; i += interval) {
     video.currentTime = i;
@@ -38,6 +42,7 @@ async function processVideo() {
     zip.file(`frame${i}.jpg`, base64Data, { base64: true });
     gif.addFrame(ctx.getImageData(0, 0, canvas.width, canvas.height), { copy: true, delay: 1000 / fps });
     console.log(`Frame ${i} captured and added to zip and gif`);
+    frameProgress.value = ((i + interval) / video.duration) * 100;
   }
 
   console.log('Generating zip file...');
@@ -49,7 +54,12 @@ async function processVideo() {
     console.log('Zip file generated and download triggered');
   });
 
+  gif.on('progress', function(p) {
+    gifProgress.value = p * 100;
+  });
+
   gif.on('finished', function(blob) {
+    console.log('GIF rendering finished');
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = 'frames.gif';
