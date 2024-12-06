@@ -13,10 +13,20 @@
     <div class="container">
         <h1>Upload Video File</h1>
         <input type="file" id="videoFile" accept=".mp4,.avi,.mov">
-        <button onclick="processVideo()">Process Video</button>
+        <div class="button-container">
+            <button class="action-button" onclick="downloadAllFrames()">Download All Frames</button>
+        </div>
+        <div class="button-container">
+            <button class="action-button" onclick="download30Frames()">Download 30 Frames</button>
+        </div>
+        <div class="button-container">
+            <button class="action-button" onclick="downloadGIF()">Download GIF</button>
+        </div>
         <div id="progressContainer">
             <p>Frame Extraction Progress:</p>
             <progress id="frameProgress" value="0" max="100"></progress>
+            <p>30 Frames Extraction Progress:</p>
+            <progress id="thirtyFrameProgress" value="0" max="100"></progress>
             <p>GIF Generation Progress:</p>
             <progress id="gifProgress" value="0" max="100"></progress>
         </div>

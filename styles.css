@@ -24,7 +24,13 @@ input[type="file"] {
   margin-bottom: 20px;
 }
 
-button {
+.button-container {
+  margin-bottom: 10px;
+}
+
+.action-button {
+  display: block;
+  width: 100%;
   background-color: #007bff;
   color: #fff;
   border: none;
@@ -33,6 +39,15 @@ button {
   cursor: pointer;
 }
 
-button:hover {
+.action-button:hover {
   background-color: #0056b3;
+}
+
+#progressContainer {
+  margin-top: 20px;
+}
+
+progress {
+  width: 100%;
+  margin-bottom: 10px;
 }
